@@ -80,7 +80,7 @@ models:
           - not_null
 
   - name: int_part_supplier
-    description: "Productos y proveedores con inventario y rentabilidad potencial."
+    description: "Relación producto-proveedor con métricas de inventario y rentabilidad potencial."
     columns:
       - name: part_supplier_id
         tests:
@@ -102,6 +102,11 @@ models:
               arguments:
                 to: ref('stg_tpch_sf10__suppliers')
                 field: supplier_id
+
+      - name: retail_price
+        description: "Precio de catálogo del producto utilizado para calcular las métricas potenciales."
+        tests:
+          - not_null
 
       - name: available_quantity
         tests:
