@@ -7,7 +7,8 @@ with
         select
             l.order_id,
             l.line_number,
-            concat(l.order_id, '-', l.line_number) as order_line_id,
+            {{ generate_composite_key("l.order_id", "l.line_number") }}
+            as order_line_id,
             o.customer_id,
             l.part_id,
             l.supplier_id,

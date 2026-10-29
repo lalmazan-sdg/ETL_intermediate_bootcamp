@@ -1,0 +1,245 @@
+
+version: 2
+
+models:
+  - name: dim_customers
+    description: "Dimensión de clientes con segmentación, geografía y atributos financieros."
+    columns:
+      - name: customer_id
+        description: "Identificador único del cliente."
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_name
+        tests:
+          - not_null
+
+      - name: market_segment
+        tests:
+          - not_null
+
+      - name: nation_id
+        tests:
+          - not_null
+
+      - name: nation_name
+        tests:
+          - not_null
+
+      - name: region_id
+        tests:
+          - not_null
+
+      - name: region_name
+        tests:
+          - not_null
+
+      - name: account_balance
+        tests:
+          - not_null
+
+  - name: dim_parts
+    description: "Dimensión de productos con atributos comerciales y de catálogo."
+    columns:
+      - name: part_id
+        description: "Identificador único del producto."
+        tests:
+          - unique
+          - not_null
+
+      - name: part_name
+        tests:
+          - not_null
+
+      - name: manufacturer
+        tests:
+          - not_null
+
+      - name: brand
+        tests:
+          - not_null
+
+      - name: part_type
+        tests:
+          - not_null
+
+      - name: retail_price
+        description: "Precio de catálogo del producto."
+        tests:
+          - not_null
+
+  
+  - name: dim_suppliers
+    description: "Dimensión de proveedores enriquecida con información geográfica."
+    columns:
+      - name: supplier_id
+        description: "Identificador único del proveedor."
+        tests:
+          - unique
+          - not_null
+
+      - name: supplier_name
+        tests:
+          - not_null
+
+      - name: nation_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_geography')
+                field: nation_id
+
+      - name: nation_name
+        tests:
+          - not_null
+
+      - name: region_id
+        tests:
+          - not_null
+
+      - name: region_name
+        tests:
+          - not_null
+
+      - name: account_balance
+        tests:
+          - not_null
+
+  
+  - name: fct_order_lines
+    description: "Tabla de hechos de líneas de pedido con métricas económicas y logísticas."
+    columns:
+      - name: order_line_id
+        description: "Identificador único de la línea de pedido."
+        tests:
+          - unique
+          - not_null
+
+      - name: order_id
+        tests:
+          - not_null
+
+      - name: line_number
+        tests:
+          - not_null
+
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
+
+      - name: part_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_parts')
+                field: part_id
+
+      - name: supplier_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_suppliers')
+                field: supplier_id
+
+      - name: quantity
+        tests:
+          - not_null
+
+      - name: net_amount
+        tests:
+          - not_null
+
+      - name: total_amount
+        tests:
+          - not_null
+
+      - name: is_late_delivery
+        tests:
+          - not_null
+
+      - name: is_returned
+        tests:
+          - not_null
+
+  
+  - name: fct_inventory
+    description: "Tabla de hechos de inventario por producto-proveedor con valoración y rentabilidad potencial."
+    columns:
+      - name: part_supplier_id
+        description: "Identificador único de la combinación producto-proveedor."
+        tests:
+          - unique
+          - not_null
+
+      - name: part_id
+        description: "Identificador del producto."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_parts')
+                field: part_id
+
+      - name: supplier_id
+        description: "Identificador del proveedor."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_suppliers')
+                field: supplier_id
+
+      - name: available_quantity
+        description: "Cantidad disponible del producto para este proveedor."
+        tests:
+          - not_null
+
+      - name: is_out_of_stock
+        description: "Indica si no hay existencias disponibles."
+        tests:
+          - not_null
+
+      - name: retail_price
+        description: "Precio de catálogo del producto."
+        tests:
+          - not_null
+
+      - name: supply_cost
+        description: "Coste unitario de suministro."
+        tests:
+          - not_null
+
+      - name: price_cost_difference
+        description: "Diferencia entre precio de catálogo y coste unitario."
+        tests:
+          - not_null
+
+      - name: inventory_value
+        description: "Valor del inventario calculado a coste de suministro."
+        tests:
+          - not_null
+
+      - name: potential_revenue
+        description: "Ingresos potenciales por la venta de todas las existencias."
+        tests:
+          - not_null
+
+      - name: potential_gross_profit
+        description: "Beneficio bruto potencial antes de otros gastos."
+        tests:
+          - not_null
+
+      - name: potential_margin_pct
+        description: "Margen bruto potencial porcentual."
+
+      - name: potential_markup_pct
+        description: "Recargo potencial porcentual sobre el coste."
+

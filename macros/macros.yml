@@ -1,0 +1,28 @@
+version: 2
+
+macros:
+  - name: calculate_percentage
+    description: "Calcula un porcentaje con redondeo configurable y protección frente a divisiones por cero."
+    arguments:
+      - name: numerator
+        type: string
+        description: "Expresión SQL del numerador."
+
+      - name: denominator
+        type: string
+        description: "Expresión SQL del denominador."
+
+      - name: decimals
+        type: integer
+        description: "Número de decimales. Por defecto, 2."
+        
+  - name: generate_composite_key
+    description: "Genera una clave compuesta concatenando dos identificadores mediante un guion."
+    arguments:
+      - name: column1
+        type: string
+        description: "Primera columna o expresión SQL de la clave."
+
+      - name: column2
+        type: string
+        description: "Segunda columna o expresión SQL de la clave."
