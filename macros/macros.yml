@@ -15,3 +15,14 @@ macros:
       - name: decimals
         type: integer
         description: "Número de decimales. Por defecto, 2."
+        
+  - name: generate_composite_key
+    description: "Genera una clave compuesta concatenando dos identificadores mediante un guion."
+    arguments:
+      - name: column1
+        type: string
+        description: "Primera columna o expresión SQL de la clave."
+
+      - name: column2
+        type: string
+        description: "Segunda columna o expresión SQL de la clave."
