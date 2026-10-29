@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: stg_tpch_sf10__customers
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_tpch_sf10__lineitems
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+      - name: line_number
+        tests:
+          - not_null
+
+  - name: stg_tpch_sf10__nations
+    columns:
+      - name: nation_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_tpch_sf10__orders
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_tpch_sf10__customer')
+                field: customer_id
+
+  - name: stg_tpch_sf10__parts
+    columns:
+      - name: part_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_tpch_sf10__partsupps
+    columns:
+      - name: part_id
+        tests:
+          - not_null
+      - name: supplier_id
+        tests:
+          - not_null
+
+  - name: stg_tpch_sf10__regions
+    columns:
+      - name: region_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_tpch_sf10__suppliers
+    columns:
+      - name: supplier_id
+        tests:
+          - unique
+          - not_null
