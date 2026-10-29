@@ -17,10 +17,9 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
-
-
-
 models:
   ETL_intermediate_bootcamp:
     staging:
       +materialized: table
+    intermediate:
+      +materialized: view
