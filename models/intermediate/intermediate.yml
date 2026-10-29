@@ -1,0 +1,206 @@
+
+version: 2
+
+models:
+  - name: int_order_lines
+    description: "Detalle de líneas de pedido con métricas económicas y logísticas."
+    columns:
+      - name: order_line_id
+        tests:
+          - unique
+          - not_null
+
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_tpch_sf10__orders')
+                field: order_id
+
+      - name: line_number
+        tests:
+          - not_null
+
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_customers')
+                field: customer_id
+
+      - name: part_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_tpch_sf10__parts')
+                field: part_id
+
+      - name: supplier_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_tpch_sf10__suppliers')
+                field: supplier_id
+
+      - name: quantity
+        tests:
+          - not_null
+
+      - name: discount_amount
+        tests:
+          - not_null
+
+      - name: net_amount
+        tests:
+          - not_null
+
+      - name: total_amount
+        tests:
+          - not_null
+
+      - name: shipping_lead_days
+        description: "Días entre pedido y envío."
+
+      - name: delivery_lead_days
+        description: "Días entre pedido y recepción."
+
+      - name: shipping_delay_days
+        description: "Días de diferencia respecto a la fecha comprometida."
+
+      - name: is_late_delivery
+        tests:
+          - not_null
+
+      - name: is_returned
+        tests:
+          - not_null
+
+  - name: int_part_supplier
+    description: "Productos y proveedores con inventario y rentabilidad potencial."
+    columns:
+      - name: part_supplier_id
+        tests:
+          - unique
+          - not_null
+
+      - name: part_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_tpch_sf10__parts')
+                field: part_id
+
+      - name: supplier_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_tpch_sf10__suppliers')
+                field: supplier_id
+
+      - name: available_quantity
+        tests:
+          - not_null
+
+      - name: supply_cost
+        tests:
+          - not_null
+
+      - name: inventory_value
+        tests:
+          - not_null
+
+      - name: price_cost_difference
+        tests:
+          - not_null
+
+      - name: potential_revenue
+        tests:
+          - not_null
+
+      - name: potential_gross_profit
+        tests:
+          - not_null
+
+      - name: potential_margin_pct
+        description: "Margen bruto potencial porcentual."
+
+      - name: potential_markup_pct
+        description: "Recargo potencial porcentual sobre coste."
+
+      - name: is_out_of_stock
+        tests:
+          - not_null
+
+  - name: int_geography
+    description: "Jerarquía geográfica de países y regiones."
+    columns:
+      - name: nation_id
+        tests:
+          - unique
+          - not_null
+
+      - name: nation_name
+        tests:
+          - not_null
+
+      - name: region_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_tpch_sf10__regions')
+                field: region_id
+
+      - name: region_name
+        tests:
+          - not_null
+
+  - name: int_customers
+    description: "Clientes enriquecidos con geografía e indicadores de saldo."
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_name
+        tests:
+          - not_null
+
+      - name: nation_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_geography')
+                field: nation_id
+
+      - name: nation_name
+        tests:
+          - not_null
+
+      - name: region_id
+        tests:
+          - not_null
+
+      - name: region_name
+        tests:
+          - not_null
+
+      - name: account_balance
+        tests:
+          - not_null
+
+      - name: is_negative_balance
+        tests:
+          - not_null
+
+      - name: is_positive_balance
+        tests:
+          - not_null

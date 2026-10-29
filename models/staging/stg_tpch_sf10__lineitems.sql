@@ -1,5 +1,27 @@
+{{
+    config(
+        materialized="incremental",
+        incremental_strategy="merge",
+        unique_key=["order_id", "line_number"],
+    )
+}}
+
 with
-    source as (select * from {{ source("tpch_sf10", "lineitem") }}),
+    source as (
+        select *
+        from {{ source("tpch_sf10", "lineitem") }}
+
+        {% if is_incremental() %}
+            where
+                not exists (
+                    select 1
+                    from {{ this }} as target
+                    where
+                        target.order_id = l_orderkey
+                        and target.line_number = l_linenumber
+                )
+        {% endif %}
+    ),
 
     renamed as (
         select
