@@ -7,36 +7,36 @@ models:
     columns:
       - name: customer_id
         description: "Identificador único del cliente."
-        tests:
+        data_tests:
           - unique
           - not_null
 
       - name: customer_name
-        tests:
+        data_tests:
           - not_null
 
       - name: market_segment
-        tests:
+        data_tests:
           - not_null
 
       - name: nation_id
-        tests:
+        data_tests:
           - not_null
 
       - name: nation_name
-        tests:
+        data_tests:
           - not_null
 
       - name: region_id
-        tests:
+        data_tests:
           - not_null
 
       - name: region_name
-        tests:
+        data_tests:
           - not_null
 
       - name: account_balance
-        tests:
+        data_tests:
           - not_null
 
   - name: dim_parts
@@ -44,47 +44,46 @@ models:
     columns:
       - name: part_id
         description: "Identificador único del producto."
-        tests:
+        data_tests:
           - unique
           - not_null
 
       - name: part_name
-        tests:
+        data_tests:
           - not_null
 
       - name: manufacturer
-        tests:
+        data_tests:
           - not_null
 
       - name: brand
-        tests:
+        data_tests:
           - not_null
 
       - name: part_type
-        tests:
+        data_tests:
           - not_null
 
       - name: retail_price
         description: "Precio de catálogo del producto."
-        tests:
+        data_tests:
           - not_null
 
-  
   - name: dim_suppliers
     description: "Dimensión de proveedores enriquecida con información geográfica."
     columns:
       - name: supplier_id
         description: "Identificador único del proveedor."
-        tests:
+        data_tests:
           - unique
           - not_null
 
       - name: supplier_name
-        tests:
+        data_tests:
           - not_null
 
       - name: nation_id
-        tests:
+        data_tests:
           - not_null
           - relationships:
               arguments:
@@ -92,41 +91,55 @@ models:
                 field: nation_id
 
       - name: nation_name
-        tests:
+        data_tests:
           - not_null
 
       - name: region_id
-        tests:
+        data_tests:
           - not_null
 
       - name: region_name
-        tests:
+        data_tests:
           - not_null
 
       - name: account_balance
-        tests:
+        data_tests:
           - not_null
 
-  
+  - name: dim_date
+    description: "Dimensión calendario compartida para el análisis temporal de pedidos, envíos y recepciones."
+    columns:
+      - name: date_key
+        description: "Clave numérica única de la fecha en formato YYYYMMDD."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: date_day
+        description: "Fecha completa del calendario."
+        data_tests:
+          - unique
+          - not_null
+
   - name: fct_order_lines
-    description: "Tabla de hechos de líneas de pedido con métricas económicas y logísticas."
+    description: "Tabla de hechos de líneas de pedido con métricas económicas, logísticas y relaciones temporales."
     columns:
       - name: order_line_id
         description: "Identificador único de la línea de pedido."
-        tests:
+        data_tests:
           - unique
           - not_null
 
       - name: order_id
-        tests:
+        data_tests:
           - not_null
 
       - name: line_number
-        tests:
+        data_tests:
           - not_null
 
       - name: customer_id
-        tests:
+        data_tests:
           - not_null
           - relationships:
               arguments:
@@ -134,7 +147,7 @@ models:
                 field: customer_id
 
       - name: part_id
-        tests:
+        data_tests:
           - not_null
           - relationships:
               arguments:
@@ -142,46 +155,81 @@ models:
                 field: part_id
 
       - name: supplier_id
-        tests:
+        data_tests:
           - not_null
           - relationships:
               arguments:
                 to: ref('dim_suppliers')
                 field: supplier_id
 
+      - name: order_date_key
+        description: "Clave de la fecha del pedido."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: ship_date_key
+        description: "Clave de la fecha de envío."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: commit_date_key
+        description: "Clave de la fecha comprometida."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: receipt_date_key
+        description: "Clave de la fecha de recepción."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
       - name: quantity
-        tests:
+        data_tests:
           - not_null
 
       - name: net_amount
-        tests:
+        data_tests:
           - not_null
 
       - name: total_amount
-        tests:
+        data_tests:
           - not_null
 
       - name: is_late_delivery
-        tests:
+        data_tests:
           - not_null
 
       - name: is_returned
-        tests:
+        data_tests:
           - not_null
 
-  
   - name: fct_inventory
     description: "Tabla de hechos de inventario por producto-proveedor con valoración y rentabilidad potencial."
     columns:
       - name: part_supplier_id
         description: "Identificador único de la combinación producto-proveedor."
-        tests:
+        data_tests:
           - unique
           - not_null
 
       - name: part_id
         description: "Identificador del producto."
-        tests:
+        data_tests:
           - not_null
           - relationships:
               arguments:
@@ -190,7 +238,7 @@ models:
 
       - name: supplier_id
         description: "Identificador del proveedor."
-        tests:
+        data_tests:
           - not_null
           - relationships:
               arguments:
@@ -199,42 +247,42 @@ models:
 
       - name: available_quantity
         description: "Cantidad disponible del producto para este proveedor."
-        tests:
+        data_tests:
           - not_null
 
       - name: is_out_of_stock
         description: "Indica si no hay existencias disponibles."
-        tests:
+        data_tests:
           - not_null
 
       - name: retail_price
         description: "Precio de catálogo del producto."
-        tests:
+        data_tests:
           - not_null
 
       - name: supply_cost
         description: "Coste unitario de suministro."
-        tests:
+        data_tests:
           - not_null
 
       - name: price_cost_difference
         description: "Diferencia entre precio de catálogo y coste unitario."
-        tests:
+        data_tests:
           - not_null
 
       - name: inventory_value
-        description: "Valor del inventario calculado a coste de suministro."
-        tests:
+        description: "Valor de las existencias calculado a coste de suministro."
+        data_tests:
           - not_null
 
       - name: potential_revenue
         description: "Ingresos potenciales por la venta de todas las existencias."
-        tests:
+        data_tests:
           - not_null
 
       - name: potential_gross_profit
         description: "Beneficio bruto potencial antes de otros gastos."
-        tests:
+        data_tests:
           - not_null
 
       - name: potential_margin_pct
@@ -242,4 +290,3 @@ models:
 
       - name: potential_markup_pct
         description: "Recargo potencial porcentual sobre el coste."
-

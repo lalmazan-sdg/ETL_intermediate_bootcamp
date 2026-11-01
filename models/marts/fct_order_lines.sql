@@ -17,6 +17,11 @@ with
             commit_date,
             receipt_date,
 
+            order_date_key,
+            ship_date_key,
+            commit_date_key,
+            receipt_date_key,
+
             order_status,
             order_priority,
             line_status,
