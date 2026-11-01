@@ -38,6 +38,11 @@ with
         select
             *,
 
+            {{ generate_date_key("order_date") }} as order_date_key,
+            {{ generate_date_key("ship_date") }} as ship_date_key,
+            {{ generate_date_key("commit_date") }} as commit_date_key,
+            {{ generate_date_key("receipt_date") }} as receipt_date_key,
+
             round(extended_price * discount_percentage, 2) as discount_amount,
 
             round(extended_price * (1 - discount_percentage), 2) as net_amount,
