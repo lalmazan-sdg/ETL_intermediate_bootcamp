@@ -1,73 +1,83 @@
+
 version: 2
 
 sources:
   - name: tpch_sf10
     database: snowflake_sample_data
     schema: tpch_sf10
+
+    config:
+      freshness:
+        warn_after:
+          count: 24
+          period: hour
+
     tables:
       - name: customer
         columns:
           - name: c_custkey
-            tests:
+            data_tests:
               - unique
               - not_null
 
       - name: lineitem
         columns:
           - name: l_orderkey
-            tests:
+            data_tests:
               - not_null
           - name: l_linenumber
-            tests:
+            data_tests:
               - not_null
 
       - name: nation
         columns:
           - name: n_nationkey
-            tests:
+            data_tests:
               - unique
               - not_null
 
       - name: orders
         columns:
           - name: o_orderkey
-            tests:
+            data_tests:
               - unique
               - not_null
+
           - name: o_custkey
-            tests:
+            data_tests:
               - not_null
-              - relationships:  
-                  arguments:           
+              - relationships:
+                  arguments:
                     to: source('tpch_sf10', 'customer')
                     field: c_custkey
 
       - name: part
         columns:
           - name: p_partkey
-            tests:
+            data_tests:
               - unique
               - not_null
 
       - name: partsupp
         columns:
           - name: ps_partkey
-            tests:
+            data_tests:
               - not_null
+
           - name: ps_suppkey
-            tests:
+            data_tests:
               - not_null
 
       - name: region
         columns:
           - name: r_regionkey
-            tests:
+            data_tests:
               - unique
               - not_null
 
       - name: supplier
         columns:
           - name: s_suppkey
-            tests:
+            data_tests:
               - unique
               - not_null

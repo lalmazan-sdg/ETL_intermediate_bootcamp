@@ -1,41 +1,51 @@
+
 {{ config(materialized="table") }}
 
-with
-    order_lines as (
-        select order_date, ship_date, commit_date, receipt_date
-        from {{ ref("int_order_lines") }}
-    ),
+{% set order_lines = ref("int_order_lines") %}
 
-    date_bounds as (
+{% set min_date_query %}
+    (
         select
             min(
-                least_ignore_nulls(order_date, ship_date, commit_date, receipt_date)
-            ) as min_date,
+                least_ignore_nulls(
+                    order_date,
+                    ship_date,
+                    commit_date,
+                    receipt_date
+                )
+            )::date
+        from {{ order_lines }}
+    )
+{% endset %}
 
-            max(
-                greatest_ignore_nulls(order_date, ship_date, commit_date, receipt_date)
-            ) as max_date
-
-        from order_lines
-    ),
-
-    date_spine as (
+{% set max_date_query %}
+    (
         select
             dateadd(
-                day, row_number() over (order by seq4()) - 1, date_bounds.min_date
-            )::date as date_day
+                day,
+                1,
+                max(
+                    greatest_ignore_nulls(
+                        order_date,
+                        ship_date,
+                        commit_date,
+                        receipt_date
+                    )
+                )::date
+            )
+        from {{ order_lines }}
+    )
+{% endset %}
 
-        from date_bounds
-        cross join table(generator(rowcount => 4000))
-    ),
-
-    filtered_dates as (
-        select date_spine.date_day
-
-        from date_spine
-        cross join date_bounds
-
-        where date_spine.date_day <= date_bounds.max_date
+with
+    date_spine as (
+        {{
+            dbt_utils.date_spine(
+                datepart="day",
+                start_date=min_date_query,
+                end_date=max_date_query
+            )
+        }}
     ),
 
     final as (
@@ -54,7 +64,7 @@ with
             date_trunc('month', date_day)::date as month_start_date,
             last_day(date_day)::date as month_end_date
 
-        from filtered_dates
+        from date_spine
     )
 
 select *

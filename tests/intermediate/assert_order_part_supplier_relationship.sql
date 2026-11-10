@@ -1,3 +1,4 @@
+{{ config(tags=['intermediate', 'business_rules']) }}
 select o.order_line_id, o.part_id, o.supplier_id
 from {{ ref("int_order_lines") }} as o
 left join
