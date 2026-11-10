@@ -1,3 +1,4 @@
+{{ config(tags=['intermediate', 'business_rules']) }}
 select *
 from {{ ref("int_order_lines") }}
 where

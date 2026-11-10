@@ -123,6 +123,16 @@ models:
 
   - name: fct_order_lines
     description: "Tabla de hechos de líneas de pedido con métricas económicas, logísticas y relaciones temporales."
+
+    data_tests:
+      - elementary.volume_anomalies
+      - elementary.schema_changes
+      - elementary.all_columns_anomalies:
+          arguments:
+            column_anomalies:
+              - null_count
+              - zero_count
+
     columns:
       - name: order_line_id
         description: "Identificador único de la línea de pedido."
@@ -220,6 +230,11 @@ models:
 
   - name: fct_inventory
     description: "Tabla de hechos de inventario por producto-proveedor con valoración y rentabilidad potencial."
+
+    data_tests:
+      - elementary.volume_anomalies
+      - elementary.schema_changes
+
     columns:
       - name: part_supplier_id
         description: "Identificador único de la combinación producto-proveedor."

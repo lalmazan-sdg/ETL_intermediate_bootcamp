@@ -1,8 +1,33 @@
+
 version: 2
 
 models:
   - name: int_order_lines
     description: "Detalle de líneas de pedido con métricas económicas, logísticas y claves temporales."
+
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "net_amount >= 0 AND net_amount <= extended_price"
+
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          arguments:
+            column_A: receipt_date
+            column_B: ship_date
+            or_equal: true
+
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          arguments:
+            column_A: ship_date
+            column_B: order_date
+            or_equal: true
+
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          arguments:
+            column_A: receipt_date
+            column_B: order_date
+            or_equal: true
+
     columns:
       - name: order_line_id
         data_tests:
@@ -100,6 +125,7 @@ models:
 
   - name: int_part_supplier
     description: "Relación producto-proveedor con métricas de inventario y rentabilidad potencial."
+
     columns:
       - name: part_supplier_id
         data_tests:
@@ -163,6 +189,7 @@ models:
 
   - name: int_geography
     description: "Jerarquía geográfica de países y regiones."
+
     columns:
       - name: nation_id
         data_tests:
@@ -187,6 +214,16 @@ models:
 
   - name: int_customers
     description: "Clientes enriquecidos con geografía e indicadores de saldo."
+
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "is_negative_balance IS NOT DISTINCT FROM (account_balance < 0)"
+
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "is_positive_balance IS NOT DISTINCT FROM (account_balance > 0)"
+
     columns:
       - name: customer_id
         data_tests:
@@ -231,6 +268,7 @@ models:
 
   - name: int_suppliers
     description: "Proveedores enriquecidos con información geográfica de países y regiones."
+
     columns:
       - name: supplier_id
         data_tests:
@@ -278,6 +316,7 @@ models:
 
   - name: int_date
     description: "Calendario generado a partir de las fechas de pedidos, envíos y recepciones."
+
     columns:
       - name: date_key
         description: "Identificador único de la fecha en formato YYYYMMDD."
