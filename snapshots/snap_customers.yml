@@ -1,0 +1,53 @@
+
+snapshots:
+  - name: snap_customers
+    description: >
+      Histórico de los clientes de TPCH.
+      Conserva las distintas versiones de
+      sus atributos a lo largo del tiempo.
+
+    relation: ref('stg_tpch_sf10__customers')
+
+    config:
+      schema: snapshots
+      unique_key: customer_id
+      strategy: check
+      check_cols: all
+      hard_deletes: new_record
+
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: >
+              dbt_valid_to is null
+              or dbt_valid_to >= dbt_valid_from
+
+      - no_overlapping_validity:
+          arguments:
+            key_columns:
+              - customer_id
+
+    columns:
+      - name: customer_id
+        data_tests:
+          - not_null
+          - unique:
+              config:
+                where: "dbt_valid_to is null"
+
+      - name: dbt_scd_id
+        data_tests:
+          - unique
+          - not_null
+
+      - name: dbt_valid_from
+        data_tests:
+          - not_null
+
+      - name: dbt_is_deleted
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['True', 'False']
+                quote: true

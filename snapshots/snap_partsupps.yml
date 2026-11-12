@@ -1,0 +1,66 @@
+
+snapshots:
+  - name: snap_partsupps
+    description: >
+      Histórico de la relación entre productos
+      y proveedores de TPCH.
+      Conserva los cambios en las existencias
+      disponibles y los costes de suministro.
+
+    relation: ref('stg_tpch_sf10__partsupps')
+
+    config:
+      schema: snapshots
+      unique_key:
+        - part_id
+        - supplier_id
+      strategy: check
+      check_cols: all
+      hard_deletes: new_record
+
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: >
+              dbt_valid_to is null
+              or dbt_valid_to >= dbt_valid_from
+
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - part_id
+              - supplier_id
+          config:
+            where: "dbt_valid_to is null"
+
+      - no_overlapping_validity:
+          arguments:
+            key_columns:
+              - part_id
+              - supplier_id
+
+    columns:
+      - name: part_id
+        data_tests:
+          - not_null
+
+      - name: supplier_id
+        data_tests:
+          - not_null
+
+      - name: dbt_scd_id
+        data_tests:
+          - unique
+          - not_null
+
+      - name: dbt_valid_from
+        data_tests:
+          - not_null
+
+      - name: dbt_is_deleted
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['True', 'False']
+                quote: true
