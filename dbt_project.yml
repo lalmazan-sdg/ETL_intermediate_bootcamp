@@ -28,14 +28,21 @@ models:
 
     staging:
       +materialized: table
+      +tags: ['staging']
 
     intermediate:
       +materialized: view
+      +tags: ['intermediate']
 
     marts:
       +materialized: view
+      +tags: ['marts']
       +grants:
         select: ['DBT_ANALYST']
 
   elementary:
     +schema: elementary
+
+snapshots:
+  ETL_intermediate_bootcamp:
+    +tags: ['snapshots']
