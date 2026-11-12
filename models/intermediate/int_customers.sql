@@ -1,4 +1,4 @@
--- CI validation: test automatic execution on pull request
+-- CI validation: test automatic execution on pull request for 2nd time
 with
     customers as (select * from {{ ref("stg_tpch_sf10__customers") }}),
 
