@@ -1,4 +1,4 @@
-{{ config(tags=['intermediate', 'business_rules']) }}
+{{ config(tags=['intermediate', 'business_rules', 'custom']) }}
 with
     inventory as (
         select *
