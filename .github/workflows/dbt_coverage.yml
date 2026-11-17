@@ -36,7 +36,7 @@ jobs:
       - name: Install dbt-coverage
         run: pip install dbt-coverage==0.5.0
 
-      - name: Validate staging documentation
+      - name: Validate sources and staging documentation
         run: |
           dbt-coverage compute doc \
             --run-artifacts-dir target \
@@ -44,8 +44,42 @@ jobs:
             --cov-fail-under 1.0 \
             --cov-report coverage-staging.json
 
-      - name: Upload coverage report
+      - name: Validate intermediate documentation
+        shell: bash
+        run: |
+          filters=()
+
+          for file in models/intermediate/*.sql; do
+            filters+=(--model-path-filter "$file")
+          done
+
+          dbt-coverage compute doc \
+            --run-artifacts-dir target \
+            "${filters[@]}" \
+            --cov-fail-under 1.0 \
+            --cov-report coverage-intermediate.json
+
+      - name: Validate marts documentation
+        shell: bash
+        run: |
+          filters=()
+
+          for file in models/marts/*.sql; do
+            filters+=(--model-path-filter "$file")
+          done
+
+          dbt-coverage compute doc \
+            --run-artifacts-dir target \
+            "${filters[@]}" \
+            --cov-fail-under 1.0 \
+            --cov-report coverage-marts.json
+
+      - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         with:
           name: dbt-documentation-coverage
-          path: coverage-staging.json
+          path: |
+            coverage-staging.json
+            coverage-intermediate.json
+            coverage-marts.json
+          if-no-files-found: error
