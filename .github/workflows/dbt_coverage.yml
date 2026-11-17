@@ -1,0 +1,65 @@
+name: DBT Documentation Coverage
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  documentation-coverage:
+    name: Validate Documentation Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run dbt Cloud documentation job
+        uses: dbt-labs/dbt-cloud-job-action@v6.0.0
+        with:
+          dbt_cloud_url: https://wz247.us1.dbt.com
+          dbt_cloud_token: ${{ secrets.DBT_CLOUD_API_TOKEN }}
+          dbt_cloud_account_id: 17879
+          dbt_cloud_job_id: 1165119
+          failure_on_error: true
+          get_artifacts: true
+          fetch_catalog: true
+          steps_override: |
+            - dbt docs generate
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dbt-coverage
+        run: pip install dbt-coverage==0.5.0
+
+      - name: Prepare artifacts
+        shell: bash
+        run: |
+          mkdir -p target
+
+          manifest=$(find . -type f -name manifest.json -print -quit)
+          catalog=$(find . -type f -name catalog.json -print -quit)
+
+          test -n "$manifest"
+          test -n "$catalog"
+
+          cp "$manifest" target/manifest.json
+          cp "$catalog" target/catalog.json
+
+      - name: Validate staging documentation
+        run: |
+          dbt-coverage compute doc \
+            --run-artifacts-dir target \
+            --model-path-filter models/staging/tpch_sf10/ \
+            --cov-fail-under 1.0 \
+            --cov-report coverage-staging.json
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-documentation-coverage
+          path: coverage-staging.json
