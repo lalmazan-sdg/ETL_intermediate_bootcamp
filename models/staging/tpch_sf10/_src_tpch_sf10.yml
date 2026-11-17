@@ -1,8 +1,8 @@
-
 version: 2
 
 sources:
   - name: tpch_sf10
+    description: "{{ doc('tpch_description') }}"
     database: snowflake_sample_data
     schema: tpch_sf10
 
@@ -14,36 +14,208 @@ sources:
 
     tables:
       - name: customer
+        description: >
+          Tabla de clientes del sistema TPC-H.
+
+          Contiene información identificativa, geográfica,
+          comercial y financiera de los clientes.
+
+          Granularidad: una fila por cliente, identificado
+          mediante c_custkey.
+
         columns:
           - name: c_custkey
+            description: >
+              Identificador único del cliente.
+              Clave primaria de la tabla.
             data_tests:
               - unique
               - not_null
+
+          - name: c_name
+            description: >
+              Nombre identificativo del cliente.
+
+          - name: c_address
+            description: >
+              Dirección postal del cliente.
+
+          - name: c_nationkey
+            description: >
+              Identificador del país al que pertenece
+              el cliente. Referencia a NATION.
+
+          - name: c_phone
+            description: >
+              Número de teléfono del cliente.
+
+          - name: c_acctbal
+            description: >
+              Saldo de la cuenta del cliente.
+              Puede presentar valores positivos o negativos.
+
+          - name: c_mktsegment
+            description: >
+              Segmento de mercado al que pertenece
+              el cliente.
+
+          - name: c_comment
+            description: >
+              Información adicional sobre el cliente.
 
       - name: lineitem
+        description: >
+          Tabla que contiene el detalle de las líneas
+          asociadas a los pedidos comerciales.
+
+          Incluye información sobre productos, proveedores,
+          cantidades, precios, descuentos, impuestos
+          y fechas logísticas.
+
+          Granularidad: una fila por línea de pedido,
+          identificada mediante la combinación de
+          l_orderkey y l_linenumber.
+
         columns:
           - name: l_orderkey
-            data_tests:
-              - not_null
-          - name: l_linenumber
+            description: >
+              Identificador del pedido al que pertenece
+              la línea. Referencia a ORDERS.
             data_tests:
               - not_null
 
+          - name: l_partkey
+            description: >
+              Identificador del producto incluido
+              en la línea de pedido.
+
+          - name: l_suppkey
+            description: >
+              Identificador del proveedor asociado
+              al producto de la línea.
+
+          - name: l_linenumber
+            description: >
+              Número de línea dentro del pedido.
+              Junto con l_orderkey identifica cada línea.
+            data_tests:
+              - not_null
+
+          - name: l_quantity
+            description: >
+              Cantidad de unidades del producto
+              incluidas en la línea de pedido.
+
+          - name: l_extendedprice
+            description: >
+              Importe bruto de la línea de pedido
+              antes de aplicar descuentos e impuestos.
+
+          - name: l_discount
+            description: >
+              Tasa de descuento aplicada a la línea
+              de pedido, expresada como proporción.
+
+          - name: l_tax
+            description: >
+              Tasa impositiva aplicada a la línea
+              de pedido, expresada como proporción.
+
+          - name: l_returnflag
+            description: >
+              Indicador relacionado con el estado
+              de devolución de la línea de pedido.
+
+          - name: l_linestatus
+            description: >
+              Estado de procesamiento de la línea
+              de pedido.
+
+          - name: l_shipdate
+            description: >
+              Fecha de envío de la línea de pedido.
+
+          - name: l_commitdate
+            description: >
+              Fecha comprometida para la entrega
+              de la línea de pedido.
+
+          - name: l_receiptdate
+            description: >
+              Fecha de recepción de la línea de pedido.
+
+          - name: l_shipinstruct
+            description: >
+              Instrucciones específicas para el envío
+              de la mercancía.
+
+          - name: l_shipmode
+            description: >
+              Modalidad de transporte utilizada
+              para el envío.
+
+          - name: l_comment
+            description: >
+              Información adicional sobre la línea
+              de pedido.
+
       - name: nation
+        description: >
+          Tabla de referencia que contiene los países
+          definidos en el conjunto de datos TPC-H.
+
+          Permite asociar clientes y proveedores
+          a una ubicación geográfica.
+
+          Granularidad: una fila por país.
+
         columns:
           - name: n_nationkey
+            description: >
+              Identificador único del país.
+              Clave primaria de la tabla.
             data_tests:
               - unique
               - not_null
 
+          - name: n_name
+            description: >
+              Nombre del país.
+
+          - name: n_regionkey
+            description: >
+              Identificador de la región geográfica
+              a la que pertenece el país.
+
+          - name: n_comment
+            description: >
+              Información adicional sobre el país.
+
       - name: orders
+        description: >
+          Tabla que contiene las cabeceras de los pedidos
+          realizados por los clientes.
+
+          Incluye información comercial y administrativa
+          de cada pedido, como fechas, estado,
+          prioridad e importe total.
+
+          Granularidad: una fila por pedido,
+          identificado mediante o_orderkey.
+
         columns:
           - name: o_orderkey
+            description: >
+              Identificador único del pedido.
+              Clave primaria de la tabla.
             data_tests:
               - unique
               - not_null
 
           - name: o_custkey
+            description: >
+              Identificador del cliente que realiza
+              el pedido. Referencia a CUSTOMER.
             data_tests:
               - not_null
               - relationships:
@@ -51,33 +223,204 @@ sources:
                     to: source('tpch_sf10', 'customer')
                     field: c_custkey
 
+          - name: o_orderstatus
+            description: >
+              Estado general del pedido.
+
+          - name: o_totalprice
+            description: >
+              Importe total registrado para el pedido,
+              considerando sus líneas y los ajustes
+              económicos aplicables.
+
+          - name: o_orderdate
+            description: >
+              Fecha en la que se realizó el pedido.
+
+          - name: o_orderpriority
+            description: >
+              Nivel de prioridad asignado al pedido.
+
+          - name: o_clerk
+            description: >
+              Identificador del empleado o agente
+              responsable de gestionar el pedido.
+
+          - name: o_shippriority
+            description: >
+              Prioridad de envío asociada al pedido.
+
+          - name: o_comment
+            description: >
+              Información adicional sobre el pedido.
+
       - name: part
+        description: >
+          Catálogo de productos disponibles
+          en el sistema comercial TPC-H.
+
+          Contiene características identificativas
+          y comerciales de los productos.
+
+          Granularidad: una fila por producto,
+          identificado mediante p_partkey.
+
         columns:
           - name: p_partkey
+            description: >
+              Identificador único del producto.
+              Clave primaria de la tabla.
             data_tests:
               - unique
               - not_null
 
+          - name: p_name
+            description: >
+              Nombre descriptivo del producto.
+
+          - name: p_mfgr
+            description: >
+              Fabricante del producto.
+
+          - name: p_brand
+            description: >
+              Marca comercial del producto.
+
+          - name: p_type
+            description: >
+              Clasificación o tipo de producto.
+
+          - name: p_size
+            description: >
+              Tamaño del producto según
+              la clasificación TPC-H.
+
+          - name: p_container
+            description: >
+              Tipo de embalaje o contenedor
+              utilizado para el producto.
+
+          - name: p_retailprice
+            description: >
+              Precio de venta de referencia
+              del producto.
+
+          - name: p_comment
+            description: >
+              Información adicional sobre el producto.
+
       - name: partsupp
+        description: >
+          Tabla que relaciona los productos
+          con los proveedores que pueden suministrarlos.
+
+          Incluye información sobre disponibilidad
+          y costes de suministro.
+
+          Granularidad: una fila por combinación
+          de producto y proveedor, identificada
+          mediante ps_partkey y ps_suppkey.
+
         columns:
           - name: ps_partkey
+            description: >
+              Identificador del producto suministrado.
+              Referencia a PART.
             data_tests:
               - not_null
 
           - name: ps_suppkey
+            description: >
+              Identificador del proveedor que
+              suministra el producto.
+              Referencia a SUPPLIER.
             data_tests:
               - not_null
+
+          - name: ps_availqty
+            description: >
+              Cantidad disponible del producto
+              para el proveedor correspondiente.
+
+          - name: ps_supplycost
+            description: >
+              Coste unitario de suministro
+              del producto por parte del proveedor.
+
+          - name: ps_comment
+            description: >
+              Información adicional sobre
+              la relación producto-proveedor.
 
       - name: region
+        description: >
+          Tabla de referencia que contiene
+          las regiones geográficas definidas
+          en el sistema TPC-H.
+
+          Permite agrupar países y realizar
+          análisis comerciales por región.
+
+          Granularidad: una fila por región.
+
         columns:
           - name: r_regionkey
+            description: >
+              Identificador único de la región.
+              Clave primaria de la tabla.
             data_tests:
               - unique
               - not_null
 
+          - name: r_name
+            description: >
+              Nombre de la región geográfica.
+
+          - name: r_comment
+            description: >
+              Información adicional sobre la región.
+
       - name: supplier
+        description: >
+          Tabla de proveedores del sistema TPC-H.
+
+          Contiene información identificativa,
+          geográfica y financiera de los proveedores.
+
+          Granularidad: una fila por proveedor,
+          identificado mediante s_suppkey.
+
         columns:
           - name: s_suppkey
+            description: >
+              Identificador único del proveedor.
+              Clave primaria de la tabla.
             data_tests:
               - unique
               - not_null
+
+          - name: s_name
+            description: >
+              Nombre identificativo del proveedor.
+
+          - name: s_address
+            description: >
+              Dirección postal del proveedor.
+
+          - name: s_nationkey
+            description: >
+              Identificador del país al que pertenece
+              el proveedor. Referencia a NATION.
+
+          - name: s_phone
+            description: >
+              Número de teléfono del proveedor.
+
+          - name: s_acctbal
+            description: >
+              Saldo de la cuenta del proveedor.
+              Puede presentar valores positivos o negativos.
+
+          - name: s_comment
+            description: >
+              Información adicional sobre el proveedor.

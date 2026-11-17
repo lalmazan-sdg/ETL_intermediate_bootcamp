@@ -1,10 +1,6 @@
-
 snapshots:
   - name: snap_customers
-    description: >
-      Histórico de los clientes de TPCH.
-      Conserva las distintas versiones de
-      sus atributos a lo largo del tiempo.
+    description: "{{ doc('snap_customers_description') }}"
 
     relation: ref('stg_tpch_sf10__customers')
 
@@ -29,22 +25,83 @@ snapshots:
 
     columns:
       - name: customer_id
+        description: >
+          Identificador de negocio del cliente.
+          Permite relacionar las diferentes
+          versiones históricas del mismo cliente.
         data_tests:
           - not_null
           - unique:
               config:
                 where: "dbt_valid_to is null"
 
+      - name: nation_id
+        description: >
+          Identificador del país al que pertenece
+          el cliente durante la vigencia de la versión.
+
+      - name: customer_name
+        description: >
+          Nombre del cliente registrado
+          en esta versión histórica.
+
+      - name: address
+        description: >
+          Dirección postal del cliente
+          correspondiente a la versión histórica.
+
+      - name: phone_number
+        description: >
+          Número de teléfono del cliente
+          durante la vigencia de la versión.
+
+      - name: account_balance
+        description: >
+          Saldo de la cuenta del cliente
+          registrado en esta versión histórica.
+
+      - name: market_segment
+        description: >
+          Segmento de mercado al que pertenecía
+          el cliente durante la vigencia de la versión.
+
+      - name: comment
+        description: >
+          Información adicional del cliente
+          conservada en la versión histórica.
+
       - name: dbt_scd_id
+        description: >
+          Identificador único generado por dbt
+          para cada versión histórica del cliente.
         data_tests:
           - unique
           - not_null
 
+      - name: dbt_updated_at
+        description: >
+          Momento de actualización registrado por dbt
+          para la versión histórica del cliente.
+
       - name: dbt_valid_from
+        description: >
+          Fecha y hora de inicio de vigencia
+          de la versión histórica.
         data_tests:
           - not_null
 
+      - name: dbt_valid_to
+        description: >
+          Fecha y hora de finalización de la vigencia.
+
+          Un valor NULL indica que la versión
+          permanece vigente.
+
       - name: dbt_is_deleted
+        description: >
+          Indicador booleano generado por dbt
+          que identifica los registros correspondientes
+          a eliminaciones detectadas en la fuente.
         data_tests:
           - not_null
           - accepted_values:

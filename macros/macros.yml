@@ -1,28 +1,87 @@
 version: 2
- 
+
 macros:
   - name: calculate_percentage
-    description: "Calcula un porcentaje con redondeo configurable y protección frente a divisiones por cero."
+    description: "{{ doc('calculate_percentage_description') }}"
+
     arguments:
       - name: numerator
         type: string
-        description: "Expresión SQL del numerador."
+        description: >
+          Expresión SQL que representa el numerador
+          utilizado en el cálculo porcentual.
 
       - name: denominator
         type: string
-        description: "Expresión SQL del denominador."
+        description: >
+          Expresión SQL que representa el denominador.
+
+          La macro utiliza NULLIF para evitar
+          divisiones por cero.
 
       - name: decimals
         type: integer
-        description: "Número de decimales. Por defecto, 2."
-        
+        description: >
+          Número de decimales utilizados
+          para redondear el resultado.
+
+          Su valor por defecto es 2.
+
   - name: generate_composite_key
-    description: "Genera una clave compuesta concatenando dos identificadores mediante un guion."
+    description: "{{ doc('generate_composite_key_description') }}"
+
     arguments:
       - name: column1
         type: string
-        description: "Primera columna o expresión SQL de la clave."
+        description: >
+          Primera columna o expresión SQL
+          utilizada para generar la clave compuesta.
+
+          Su valor se convierte a VARCHAR
+          antes de realizar la concatenación.
 
       - name: column2
         type: string
-        description: "Segunda columna o expresión SQL de la clave."
+        description: >
+          Segunda columna o expresión SQL
+          utilizada para generar la clave compuesta.
+
+          Su valor se convierte a VARCHAR
+          y se concatena con el primer argumento
+          utilizando un guion como separador.
+
+  - name: generate_date_key
+    description: "{{ doc('generate_date_key_description') }}"
+
+    arguments:
+      - name: date_column
+        type: string
+        description: >
+          Columna o expresión SQL que contiene
+          la fecha utilizada para generar
+          la clave temporal.
+
+          La macro transforma la fecha
+          en un identificador numérico
+          con formato YYYYMMDD.
+
+  - name: test_no_overlapping_validity
+    description: "{{ doc('no_overlapping_validity_description') }}"
+
+    arguments:
+      - name: model
+        type: relation
+        description: >
+          Relación correspondiente al snapshot
+          sobre el que se ejecuta la validación
+          de intervalos temporales.
+
+      - name: key_columns
+        type: list
+        description: >
+          Lista de columnas que identifican
+          de forma única la entidad de negocio.
+
+          Se utilizan para agrupar las versiones
+          históricas y comprobar que sus intervalos
+          de vigencia no se solapan.

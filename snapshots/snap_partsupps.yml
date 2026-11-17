@@ -1,11 +1,6 @@
-
 snapshots:
   - name: snap_partsupps
-    description: >
-      Histórico de la relación entre productos
-      y proveedores de TPCH.
-      Conserva los cambios en las existencias
-      disponibles y los costes de suministro.
+    description: "{{ doc('snap_partsupps_description') }}"
 
     relation: ref('stg_tpch_sf10__partsupps')
 
@@ -41,23 +36,75 @@ snapshots:
 
     columns:
       - name: part_id
+        description: >
+          Identificador del producto asociado
+          a la relación de suministro.
+
+          Forma parte de la clave de negocio
+          utilizada para identificar las versiones.
         data_tests:
           - not_null
 
       - name: supplier_id
+        description: >
+          Identificador del proveedor asociado
+          al producto.
+
+          Junto con part_id identifica la relación
+          de suministro a lo largo del tiempo.
         data_tests:
           - not_null
 
+      - name: available_quantity
+        description: >
+          Cantidad disponible del producto
+          para el proveedor correspondiente
+          durante la vigencia de la versión.
+
+      - name: supply_cost
+        description: >
+          Coste unitario de suministro del producto
+          registrado en esta versión histórica.
+
+      - name: comment
+        description: >
+          Información adicional sobre la relación
+          producto-proveedor conservada en esta versión.
+
       - name: dbt_scd_id
+        description: >
+          Identificador único generado por dbt
+          para cada versión histórica
+          de la relación producto-proveedor.
         data_tests:
           - unique
           - not_null
 
+      - name: dbt_updated_at
+        description: >
+          Momento de actualización registrado por dbt
+          para la versión histórica
+          de la relación producto-proveedor.
+
       - name: dbt_valid_from
+        description: >
+          Fecha y hora de inicio de vigencia
+          de la versión histórica.
         data_tests:
           - not_null
 
+      - name: dbt_valid_to
+        description: >
+          Fecha y hora de finalización de la vigencia.
+
+          Un valor NULL indica que la versión
+          permanece vigente.
+
       - name: dbt_is_deleted
+        description: >
+          Indicador booleano generado por dbt
+          que identifica eliminaciones de relaciones
+          producto-proveedor detectadas en la fuente.
         data_tests:
           - not_null
           - accepted_values:

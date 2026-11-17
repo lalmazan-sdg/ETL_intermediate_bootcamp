@@ -1,88 +1,154 @@
-
 version: 2
 
 models:
   - name: dim_customers
-    description: "Dimensión de clientes con segmentación, geografía y atributos financieros."
+    description: "{{ doc('dim_customers_description') }}"
+
     columns:
       - name: customer_id
-        description: "Identificador único del cliente."
+        description: >
+          Identificador único del cliente.
+          Clave primaria de la dimensión.
         data_tests:
           - unique
           - not_null
 
       - name: customer_name
+        description: >
+          Nombre identificativo del cliente.
         data_tests:
           - not_null
 
+      - name: address
+        description: >
+          Dirección postal del cliente.
+
+      - name: phone_number
+        description: >
+          Número de teléfono del cliente.
+
       - name: market_segment
+        description: >
+          Segmento de mercado utilizado para clasificar
+          los clientes en los análisis comerciales.
         data_tests:
           - not_null
 
       - name: nation_id
+        description: >
+          Identificador del país al que pertenece el cliente.
         data_tests:
           - not_null
 
       - name: nation_name
+        description: >
+          Nombre del país del cliente.
         data_tests:
           - not_null
 
       - name: region_id
+        description: >
+          Identificador de la región geográfica del cliente.
         data_tests:
           - not_null
 
       - name: region_name
+        description: >
+          Nombre de la región geográfica del cliente.
         data_tests:
           - not_null
 
       - name: account_balance
+        description: >
+          Saldo de la cuenta del cliente.
+          Puede presentar valores positivos o negativos.
         data_tests:
           - not_null
 
+      - name: is_negative_balance
+        description: >
+          Indicador booleano que identifica clientes
+          cuyo saldo de cuenta es inferior a cero.
+
+      - name: is_positive_balance
+        description: >
+          Indicador booleano que identifica clientes
+          cuyo saldo de cuenta es superior a cero.
+
   - name: dim_parts
-    description: "Dimensión de productos con atributos comerciales y de catálogo."
+    description: "{{ doc('dim_parts_description') }}"
+
     columns:
       - name: part_id
-        description: "Identificador único del producto."
+        description: >
+          Identificador único del producto.
+          Clave primaria de la dimensión.
         data_tests:
           - unique
           - not_null
 
       - name: part_name
+        description: >
+          Nombre descriptivo del producto.
         data_tests:
           - not_null
 
       - name: manufacturer
+        description: >
+          Fabricante del producto.
         data_tests:
           - not_null
 
       - name: brand
+        description: >
+          Marca comercial del producto.
         data_tests:
           - not_null
 
       - name: part_type
+        description: >
+          Clasificación o tipo del producto.
         data_tests:
           - not_null
 
+      - name: size
+        description: >
+          Tamaño del producto según la clasificación TPC-H.
+
+      - name: container
+        description: >
+          Tipo de embalaje o contenedor del producto.
+
       - name: retail_price
-        description: "Precio de catálogo del producto."
+        description: >
+          Precio de catálogo del producto.
+          Se utiliza como referencia para calcular
+          las métricas potenciales de inventario.
         data_tests:
           - not_null
 
   - name: dim_suppliers
-    description: "Dimensión de proveedores enriquecida con información geográfica."
+    description: "{{ doc('dim_suppliers_description') }}"
+
     columns:
       - name: supplier_id
-        description: "Identificador único del proveedor."
+        description: >
+          Identificador único del proveedor.
+          Clave primaria de la dimensión.
         data_tests:
           - unique
           - not_null
 
       - name: supplier_name
+        description: >
+          Nombre identificativo del proveedor.
         data_tests:
           - not_null
 
       - name: nation_id
+        description: >
+          Identificador del país al que pertenece
+          el proveedor.
         data_tests:
           - not_null
           - relationships:
@@ -91,38 +157,109 @@ models:
                 field: nation_id
 
       - name: nation_name
+        description: >
+          Nombre del país del proveedor.
         data_tests:
           - not_null
 
       - name: region_id
+        description: >
+          Identificador de la región geográfica
+          del proveedor.
         data_tests:
           - not_null
 
       - name: region_name
+        description: >
+          Nombre de la región geográfica del proveedor.
         data_tests:
           - not_null
+
+      - name: address
+        description: >
+          Dirección postal del proveedor.
+
+      - name: phone_number
+        description: >
+          Número de teléfono del proveedor.
 
       - name: account_balance
+        description: >
+          Saldo de la cuenta del proveedor.
+          Puede presentar valores positivos o negativos.
         data_tests:
           - not_null
 
+      - name: comment
+        description: >
+          Información descriptiva adicional
+          sobre el proveedor.
+
   - name: dim_date
-    description: "Dimensión calendario compartida para el análisis temporal de pedidos, envíos y recepciones."
+    description: "{{ doc('dim_date_description') }}"
+
     columns:
       - name: date_key
-        description: "Clave numérica única de la fecha en formato YYYYMMDD."
+        description: >
+          Identificador único de la fecha
+          en formato YYYYMMDD.
         data_tests:
           - unique
           - not_null
 
       - name: date_day
-        description: "Fecha completa del calendario."
+        description: >
+          Fecha completa correspondiente al registro
+          del calendario.
         data_tests:
           - unique
           - not_null
 
+      - name: year
+        description: >
+          Año correspondiente a la fecha.
+
+      - name: quarter
+        description: >
+          Trimestre del año, comprendido entre 1 y 4.
+
+      - name: month
+        description: >
+          Número de mes del año, comprendido entre 1 y 12.
+
+      - name: month_name
+        description: >
+          Nombre abreviado del mes generado
+          mediante la función MONTHNAME de Snowflake.
+
+      - name: week_of_year
+        description: >
+          Número de semana del año según el calendario ISO.
+
+      - name: day_of_month
+        description: >
+          Número de día dentro del mes.
+
+      - name: day_of_week
+        description: >
+          Número de día de la semana según ISO,
+          donde 1 corresponde al lunes y 7 al domingo.
+
+      - name: is_weekend
+        description: >
+          Indicador booleano que identifica
+          los sábados y domingos.
+
+      - name: month_start_date
+        description: >
+          Fecha correspondiente al primer día del mes.
+
+      - name: month_end_date
+        description: >
+          Fecha correspondiente al último día del mes.
+
   - name: fct_order_lines
-    description: "Tabla de hechos de líneas de pedido con métricas económicas, logísticas y relaciones temporales."
+    description: "{{ doc('fct_order_lines_description') }}"
 
     data_tests:
       - elementary.volume_anomalies
@@ -135,20 +272,31 @@ models:
 
     columns:
       - name: order_line_id
-        description: "Identificador único de la línea de pedido."
+        description: >
+          Identificador único de la línea de pedido,
+          generado a partir de order_id y line_number.
+          Clave primaria de la tabla de hechos.
         data_tests:
           - unique
           - not_null
 
       - name: order_id
+        description: >
+          Identificador del pedido al que pertenece
+          la línea de pedido.
         data_tests:
           - not_null
 
       - name: line_number
+        description: >
+          Número de línea dentro del pedido.
         data_tests:
           - not_null
 
       - name: customer_id
+        description: >
+          Identificador del cliente asociado
+          a la línea de pedido.
         data_tests:
           - not_null
           - relationships:
@@ -157,6 +305,9 @@ models:
                 field: customer_id
 
       - name: part_id
+        description: >
+          Identificador del producto incluido
+          en la línea de pedido.
         data_tests:
           - not_null
           - relationships:
@@ -165,6 +316,9 @@ models:
                 field: part_id
 
       - name: supplier_id
+        description: >
+          Identificador del proveedor asociado
+          a la línea de pedido.
         data_tests:
           - not_null
           - relationships:
@@ -172,8 +326,26 @@ models:
                 to: ref('dim_suppliers')
                 field: supplier_id
 
+      - name: order_date
+        description: >
+          Fecha en la que se realizó el pedido.
+
+      - name: ship_date
+        description: >
+          Fecha de envío de la línea de pedido.
+
+      - name: commit_date
+        description: >
+          Fecha comprometida para la entrega.
+
+      - name: receipt_date
+        description: >
+          Fecha de recepción de la mercancía.
+
       - name: order_date_key
-        description: "Clave de la fecha del pedido."
+        description: >
+          Clave temporal de la fecha del pedido
+          en formato YYYYMMDD.
         data_tests:
           - not_null
           - relationships:
@@ -182,7 +354,9 @@ models:
                 field: date_key
 
       - name: ship_date_key
-        description: "Clave de la fecha de envío."
+        description: >
+          Clave temporal de la fecha de envío
+          en formato YYYYMMDD.
         data_tests:
           - not_null
           - relationships:
@@ -191,7 +365,9 @@ models:
                 field: date_key
 
       - name: commit_date_key
-        description: "Clave de la fecha comprometida."
+        description: >
+          Clave temporal de la fecha comprometida
+          en formato YYYYMMDD.
         data_tests:
           - not_null
           - relationships:
@@ -200,7 +376,9 @@ models:
                 field: date_key
 
       - name: receipt_date_key
-        description: "Clave de la fecha de recepción."
+        description: >
+          Clave temporal de la fecha de recepción
+          en formato YYYYMMDD.
         data_tests:
           - not_null
           - relationships:
@@ -208,28 +386,114 @@ models:
                 to: ref('dim_date')
                 field: date_key
 
+      - name: order_status
+        description: >
+          Estado general del pedido.
+
+      - name: order_priority
+        description: >
+          Nivel de prioridad asignado al pedido.
+
+      - name: line_status
+        description: >
+          Estado de procesamiento de la línea de pedido.
+
+      - name: return_flag
+        description: >
+          Indicador de devolución registrado
+          en los datos originales.
+
+      - name: ship_mode
+        description: >
+          Modalidad de transporte utilizada
+          para el envío.
+
+      - name: ship_instructions
+        description: >
+          Instrucciones específicas para el envío
+          de la mercancía.
+
       - name: quantity
+        description: >
+          Cantidad de unidades del producto
+          incluidas en la línea de pedido.
         data_tests:
           - not_null
 
+      - name: extended_price
+        description: >
+          Importe bruto de la línea de pedido
+          antes de descuentos e impuestos.
+
+      - name: discount_percentage
+        description: >
+          Proporción de descuento aplicada
+          a la línea de pedido.
+
+      - name: tax_rate
+        description: >
+          Tasa impositiva aplicada a la línea de pedido,
+          expresada como proporción.
+
+      - name: discount_amount
+        description: >
+          Importe del descuento calculado multiplicando
+          extended_price por discount_percentage.
+          Redondeado a dos decimales.
+
       - name: net_amount
+        description: >
+          Importe después de aplicar el descuento
+          y antes de impuestos.
+          Redondeado a dos decimales.
         data_tests:
           - not_null
 
       - name: total_amount
+        description: >
+          Importe después de aplicar el descuento
+          e incluir los impuestos.
+          Redondeado a dos decimales.
         data_tests:
           - not_null
 
+      - name: shipping_lead_days
+        description: >
+          Número de días transcurridos entre
+          la fecha del pedido y la fecha de envío.
+
+      - name: delivery_lead_days
+        description: >
+          Número de días transcurridos entre
+          la fecha del pedido y la fecha de recepción.
+
+      - name: delivery_days
+        description: >
+          Número de días transcurridos entre
+          la fecha de envío y la fecha de recepción.
+
+      - name: shipping_delay_days
+        description: >
+          Diferencia en días entre la fecha comprometida
+          y la fecha real de recepción.
+          Los valores positivos indican retraso.
+
       - name: is_late_delivery
+        description: >
+          Indicador booleano que identifica las entregas
+          recibidas después de la fecha comprometida.
         data_tests:
           - not_null
 
       - name: is_returned
+        description: >
+          Indicador booleano que identifica las líneas
+          cuyo return_flag tiene el valor R.
         data_tests:
           - not_null
 
   - name: fct_inventory
-    description: "Tabla de hechos de inventario por producto-proveedor con valoración y rentabilidad potencial."
+    description: "{{ doc('fct_inventory_description') }}"
 
     data_tests:
       - elementary.volume_anomalies
@@ -237,13 +501,18 @@ models:
 
     columns:
       - name: part_supplier_id
-        description: "Identificador único de la combinación producto-proveedor."
+        description: >
+          Identificador único de la combinación
+          producto-proveedor.
+          Clave primaria de la tabla de hechos.
         data_tests:
           - unique
           - not_null
 
       - name: part_id
-        description: "Identificador del producto."
+        description: >
+          Identificador del producto asociado
+          a la relación de suministro.
         data_tests:
           - not_null
           - relationships:
@@ -252,7 +521,9 @@ models:
                 field: part_id
 
       - name: supplier_id
-        description: "Identificador del proveedor."
+        description: >
+          Identificador del proveedor asociado
+          al producto.
         data_tests:
           - not_null
           - relationships:
@@ -261,47 +532,74 @@ models:
                 field: supplier_id
 
       - name: available_quantity
-        description: "Cantidad disponible del producto para este proveedor."
+        description: >
+          Cantidad disponible del producto
+          para el proveedor correspondiente.
         data_tests:
           - not_null
 
       - name: is_out_of_stock
-        description: "Indica si no hay existencias disponibles."
+        description: >
+          Indicador booleano que identifica
+          las combinaciones producto-proveedor
+          cuya cantidad disponible es igual a cero.
         data_tests:
           - not_null
 
       - name: retail_price
-        description: "Precio de catálogo del producto."
+        description: >
+          Precio de catálogo del producto.
         data_tests:
           - not_null
 
       - name: supply_cost
-        description: "Coste unitario de suministro."
+        description: >
+          Coste unitario de suministro
+          del producto por parte del proveedor.
         data_tests:
           - not_null
 
       - name: price_cost_difference
-        description: "Diferencia entre precio de catálogo y coste unitario."
+        description: >
+          Diferencia unitaria entre el precio
+          de catálogo y el coste de suministro.
+          Redondeada a dos decimales.
         data_tests:
           - not_null
 
       - name: inventory_value
-        description: "Valor de las existencias calculado a coste de suministro."
+        description: >
+          Valor del inventario calculado multiplicando
+          supply_cost por available_quantity.
+          Redondeado a dos decimales.
         data_tests:
           - not_null
 
       - name: potential_revenue
-        description: "Ingresos potenciales por la venta de todas las existencias."
+        description: >
+          Ingresos potenciales derivados de vender
+          todas las unidades disponibles
+          al precio de catálogo.
         data_tests:
           - not_null
 
       - name: potential_gross_profit
-        description: "Beneficio bruto potencial antes de otros gastos."
+        description: >
+          Beneficio bruto potencial calculado multiplicando
+          la diferencia entre precio y coste
+          por la cantidad disponible.
+          Redondeado a dos decimales.
         data_tests:
           - not_null
 
       - name: potential_margin_pct
-        description: "Margen bruto potencial porcentual."
+        description: >
+          Margen bruto potencial porcentual,
+          calculado sobre el precio de catálogo
+          mediante la macro calculate_percentage.
 
       - name: potential_markup_pct
-        description: "Recargo potencial porcentual sobre el coste."
+        description: >
+          Recargo potencial porcentual,
+          calculado sobre el coste de suministro
+          mediante la macro calculate_percentage.
