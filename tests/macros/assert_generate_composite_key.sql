@@ -1,4 +1,4 @@
-{{ config(tags=['macros', 'business_rules']) }}
+{{ config(tags=['macros', 'technical', 'custom']) }}
 with
     test_cases as (
         select column1, column2, expected_result

@@ -1,4 +1,4 @@
-{{ config(tags=['marts', 'business_rules']) }}
+{{ config(tags=['marts', 'business_rules', 'custom']) }}
 with
 intermediate as (
     select
