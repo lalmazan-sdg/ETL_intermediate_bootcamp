@@ -1,0 +1,23 @@
+version: 2
+
+data_tests:
+  - name: assert_inventory_calculations
+    description: "{{ doc('assert_inventory_calculations_description') }}"
+
+  - name: assert_order_lines_amounts
+    description: "{{ doc('assert_order_lines_amounts_description') }}"
+
+  - name: assert_order_lines_consistency
+    description: "{{ doc('assert_order_lines_consistency_description') }}"
+
+  - name: assert_order_part_supplier_relationship
+    description: "{{ doc('assert_order_part_supplier_relationship_description') }}"
+
+  - name: assert_generate_composite_key
+    description: "{{ doc('assert_generate_composite_key_description') }}"
+
+  - name: assert_date_dimension_coverage
+    description: "{{ doc('assert_date_dimension_coverage_description') }}"
+
+  - name: assert_order_lines_reconciliation
+    description: "{{ doc('assert_order_lines_reconciliation_description') }}"

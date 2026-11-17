@@ -1,9 +1,8 @@
-
 version: 2
 
 models:
   - name: int_order_lines
-    description: "Detalle de líneas de pedido con métricas económicas, logísticas y claves temporales."
+    description: "{{ doc('int_order_lines_description') }}"
 
     data_tests:
       - dbt_utils.expression_is_true:
@@ -29,12 +28,10 @@ models:
             or_equal: true
 
     columns:
-      - name: order_line_id
-        data_tests:
-          - unique
-          - not_null
-
       - name: order_id
+        description: >
+          Identificador del pedido al que pertenece
+          la línea de pedido.
         data_tests:
           - not_null
           - relationships:
@@ -43,10 +40,24 @@ models:
                 field: order_id
 
       - name: line_number
+        description: >
+          Número de línea dentro del pedido.
+          Forma parte de la clave de negocio.
         data_tests:
           - not_null
 
+      - name: order_line_id
+        description: >
+          Identificador único de la línea de pedido,
+          generado mediante la macro generate_composite_key
+          a partir de order_id y line_number.
+        data_tests:
+          - unique
+          - not_null
+
       - name: customer_id
+        description: >
+          Identificador del cliente asociado al pedido.
         data_tests:
           - not_null
           - relationships:
@@ -55,6 +66,9 @@ models:
                 field: customer_id
 
       - name: part_id
+        description: >
+          Identificador del producto incluido
+          en la línea de pedido.
         data_tests:
           - not_null
           - relationships:
@@ -63,6 +77,9 @@ models:
                 field: part_id
 
       - name: supplier_id
+        description: >
+          Identificador del proveedor asociado
+          a la línea de pedido.
         data_tests:
           - not_null
           - relationships:
@@ -70,69 +87,164 @@ models:
                 to: ref('stg_tpch_sf10__suppliers')
                 field: supplier_id
 
+      - name: order_date
+        description: >
+          Fecha en la que se realizó el pedido.
+
+      - name: ship_date
+        description: >
+          Fecha de envío de la línea de pedido.
+
+      - name: commit_date
+        description: >
+          Fecha comprometida para la entrega.
+
+      - name: receipt_date
+        description: >
+          Fecha de recepción de la mercancía.
+
+      - name: order_status
+        description: >
+          Estado general del pedido.
+
+      - name: order_priority
+        description: >
+          Nivel de prioridad asignado al pedido.
+
+      - name: line_status
+        description: >
+          Estado de procesamiento de la línea de pedido.
+
+      - name: return_flag
+        description: >
+          Indicador de devolución registrado
+          en la fuente de líneas de pedido.
+
+      - name: ship_mode
+        description: >
+          Modalidad de transporte utilizada para el envío.
+
+      - name: ship_instructions
+        description: >
+          Instrucciones específicas de envío.
+
+      - name: quantity
+        description: >
+          Cantidad de unidades del producto incluidas
+          en la línea de pedido.
+        data_tests:
+          - not_null
+
+      - name: extended_price
+        description: >
+          Importe bruto de la línea de pedido
+          antes de descuentos e impuestos.
+
+      - name: discount_percentage
+        description: >
+          Proporción de descuento aplicada,
+          expresada como un valor entre 0 y 1.
+
+      - name: tax_rate
+        description: >
+          Tasa impositiva aplicada a la línea,
+          expresada como proporción.
+
       - name: order_date_key
-        description: "Clave temporal de la fecha del pedido en formato YYYYMMDD."
+        description: >
+          Clave temporal de la fecha del pedido
+          en formato YYYYMMDD.
         data_tests:
           - not_null
 
       - name: ship_date_key
-        description: "Clave temporal de la fecha de envío en formato YYYYMMDD."
+        description: >
+          Clave temporal de la fecha de envío
+          en formato YYYYMMDD.
         data_tests:
           - not_null
 
       - name: commit_date_key
-        description: "Clave temporal de la fecha comprometida en formato YYYYMMDD."
+        description: >
+          Clave temporal de la fecha comprometida
+          en formato YYYYMMDD.
         data_tests:
           - not_null
 
       - name: receipt_date_key
-        description: "Clave temporal de la fecha de recepción en formato YYYYMMDD."
-        data_tests:
-          - not_null
-
-      - name: quantity
+        description: >
+          Clave temporal de la fecha de recepción
+          en formato YYYYMMDD.
         data_tests:
           - not_null
 
       - name: discount_amount
+        description: >
+          Importe del descuento calculado multiplicando
+          extended_price por discount_percentage.
+          Redondeado a dos decimales.
         data_tests:
           - not_null
 
       - name: net_amount
+        description: >
+          Importe después de aplicar el descuento
+          y antes de impuestos.
+          Redondeado a dos decimales.
         data_tests:
           - not_null
 
       - name: total_amount
+        description: >
+          Importe después de aplicar el descuento
+          e incluir los impuestos.
+          Redondeado a dos decimales.
         data_tests:
           - not_null
 
       - name: shipping_lead_days
-        description: "Días entre pedido y envío."
+        description: >
+          Número de días transcurridos entre
+          la fecha del pedido y la fecha de envío.
 
       - name: delivery_lead_days
-        description: "Días entre pedido y recepción."
+        description: >
+          Número de días transcurridos entre
+          la fecha del pedido y la fecha de recepción.
+
+      - name: delivery_days
+        description: >
+          Número de días transcurridos entre
+          la fecha de envío y la fecha de recepción.
 
       - name: shipping_delay_days
-        description: "Días de diferencia respecto a la fecha comprometida."
+        description: >
+          Diferencia en días entre la fecha comprometida
+          y la fecha real de recepción.
+          Los valores positivos indican retraso.
 
       - name: is_late_delivery
+        description: >
+          Indicador booleano que identifica las entregas
+          recibidas después de la fecha comprometida.
         data_tests:
           - not_null
 
       - name: is_returned
+        description: >
+          Indicador booleano que identifica las líneas
+          cuyo return_flag tiene el valor R.
         data_tests:
           - not_null
 
   - name: int_part_supplier
-    description: "Relación producto-proveedor con métricas de inventario y rentabilidad potencial."
+    description: "{{ doc('int_part_supplier_description') }}"
 
     columns:
-      - name: part_supplier_id
-        data_tests:
-          - unique
-          - not_null
-
       - name: part_id
+        description: >
+          Identificador del producto asociado
+          a la relación de suministro.
         data_tests:
           - not_null
           - relationships:
@@ -141,6 +253,9 @@ models:
                 field: part_id
 
       - name: supplier_id
+        description: >
+          Identificador del proveedor que suministra
+          el producto.
         data_tests:
           - not_null
           - relationships:
@@ -148,59 +263,108 @@ models:
                 to: ref('stg_tpch_sf10__suppliers')
                 field: supplier_id
 
+      - name: part_supplier_id
+        description: >
+          Identificador único generado mediante
+          la macro generate_composite_key
+          a partir de part_id y supplier_id.
+        data_tests:
+          - unique
+          - not_null
+
       - name: retail_price
-        description: "Precio de catálogo del producto utilizado para calcular las métricas potenciales."
+        description: >
+          Precio de catálogo del producto utilizado
+          para calcular las métricas potenciales.
         data_tests:
           - not_null
 
       - name: available_quantity
+        description: >
+          Cantidad disponible del producto
+          para el proveedor correspondiente.
         data_tests:
           - not_null
 
       - name: supply_cost
+        description: >
+          Coste unitario de suministro del producto
+          por parte del proveedor.
         data_tests:
           - not_null
 
       - name: inventory_value
+        description: >
+          Valor del inventario calculado multiplicando
+          supply_cost por available_quantity.
+          Redondeado a dos decimales.
         data_tests:
           - not_null
 
       - name: price_cost_difference
+        description: >
+          Diferencia unitaria entre el precio de catálogo
+          y el coste de suministro.
+          Redondeada a dos decimales.
         data_tests:
           - not_null
 
       - name: potential_revenue
+        description: >
+          Ingresos potenciales derivados de vender
+          todas las unidades disponibles al precio
+          de catálogo.
         data_tests:
           - not_null
 
       - name: potential_gross_profit
+        description: >
+          Beneficio bruto potencial calculado multiplicando
+          la diferencia entre precio y coste
+          por la cantidad disponible.
         data_tests:
           - not_null
 
       - name: potential_margin_pct
-        description: "Margen bruto potencial porcentual."
+        description: >
+          Margen bruto potencial porcentual,
+          calculado sobre el precio de catálogo.
 
       - name: potential_markup_pct
-        description: "Recargo potencial porcentual sobre coste."
+        description: >
+          Recargo potencial porcentual,
+          calculado sobre el coste de suministro.
 
       - name: is_out_of_stock
+        description: >
+          Indicador booleano que identifica las combinaciones
+          producto-proveedor cuya cantidad disponible
+          es igual a cero.
         data_tests:
           - not_null
 
   - name: int_geography
-    description: "Jerarquía geográfica de países y regiones."
+    description: "{{ doc('int_geography_description') }}"
 
     columns:
       - name: nation_id
+        description: >
+          Identificador único del país.
+          Clave primaria del modelo.
         data_tests:
           - unique
           - not_null
 
       - name: nation_name
+        description: >
+          Nombre del país.
         data_tests:
           - not_null
 
       - name: region_id
+        description: >
+          Identificador de la región geográfica
+          a la que pertenece el país.
         data_tests:
           - not_null
           - relationships:
@@ -209,11 +373,13 @@ models:
                 field: region_id
 
       - name: region_name
+        description: >
+          Nombre de la región geográfica.
         data_tests:
           - not_null
 
   - name: int_customers
-    description: "Clientes enriquecidos con geografía e indicadores de saldo."
+    description: "{{ doc('int_customers_description') }}"
 
     data_tests:
       - dbt_utils.expression_is_true:
@@ -226,15 +392,46 @@ models:
 
     columns:
       - name: customer_id
+        description: >
+          Identificador único del cliente.
         data_tests:
           - unique
           - not_null
 
       - name: customer_name
+        description: >
+          Nombre identificativo del cliente.
         data_tests:
           - not_null
 
+      - name: address
+        description: >
+          Dirección postal del cliente.
+
+      - name: phone_number
+        description: >
+          Número de teléfono del cliente.
+
+      - name: account_balance
+        description: >
+          Saldo de la cuenta del cliente.
+          Se utiliza para calcular los indicadores
+          de saldo positivo y negativo.
+        data_tests:
+          - not_null
+
+      - name: market_segment
+        description: >
+          Segmento de mercado al que pertenece el cliente.
+
+      - name: comment
+        description: >
+          Información adicional sobre el cliente.
+
       - name: nation_id
+        description: >
+          Identificador del país al que pertenece
+          el cliente.
         data_tests:
           - not_null
           - relationships:
@@ -243,43 +440,61 @@ models:
                 field: nation_id
 
       - name: nation_name
+        description: >
+          Nombre del país incorporado mediante
+          el modelo int_geography.
         data_tests:
           - not_null
 
       - name: region_id
+        description: >
+          Identificador de la región geográfica
+          del cliente.
         data_tests:
           - not_null
 
       - name: region_name
-        data_tests:
-          - not_null
-
-      - name: account_balance
+        description: >
+          Nombre de la región geográfica
+          del cliente.
         data_tests:
           - not_null
 
       - name: is_negative_balance
+        description: >
+          Indicador booleano que identifica clientes
+          con un saldo de cuenta inferior a cero.
         data_tests:
           - not_null
 
       - name: is_positive_balance
+        description: >
+          Indicador booleano que identifica clientes
+          con un saldo de cuenta superior a cero.
         data_tests:
           - not_null
 
   - name: int_suppliers
-    description: "Proveedores enriquecidos con información geográfica de países y regiones."
+    description: "{{ doc('int_suppliers_description') }}"
 
     columns:
       - name: supplier_id
+        description: >
+          Identificador único del proveedor.
         data_tests:
           - unique
           - not_null
 
       - name: supplier_name
+        description: >
+          Nombre identificativo del proveedor.
         data_tests:
           - not_null
 
       - name: nation_id
+        description: >
+          Identificador del país al que pertenece
+          el proveedor.
         data_tests:
           - not_null
           - relationships:
@@ -288,64 +503,124 @@ models:
                 field: nation_id
 
       - name: nation_name
+        description: >
+          Nombre del país incorporado desde
+          el modelo int_geography.
         data_tests:
           - not_null
 
       - name: region_id
+        description: >
+          Identificador de la región geográfica
+          del proveedor.
         data_tests:
           - not_null
 
       - name: region_name
+        description: >
+          Nombre de la región geográfica
+          del proveedor.
         data_tests:
           - not_null
 
       - name: address
+        description: >
+          Dirección postal del proveedor.
         data_tests:
           - not_null
 
       - name: phone_number
+        description: >
+          Número de teléfono del proveedor.
         data_tests:
           - not_null
 
       - name: account_balance
+        description: >
+          Saldo de la cuenta del proveedor.
+          Puede presentar valores positivos o negativos.
         data_tests:
           - not_null
 
       - name: comment
-        description: "Comentario descriptivo del proveedor."
+        description: >
+          Información adicional sobre el proveedor.
 
   - name: int_date
-    description: "Calendario generado a partir de las fechas de pedidos, envíos y recepciones."
+    description: "{{ doc('int_date_description') }}"
 
     columns:
       - name: date_key
-        description: "Identificador único de la fecha en formato YYYYMMDD."
+        description: >
+          Identificador único de la fecha
+          en formato YYYYMMDD.
         data_tests:
           - unique
           - not_null
 
       - name: date_day
-        description: "Fecha completa del calendario."
+        description: >
+          Fecha completa correspondiente
+          al registro del calendario.
         data_tests:
           - unique
           - not_null
 
       - name: year
+        description: >
+          Año correspondiente a la fecha.
         data_tests:
           - not_null
 
       - name: quarter
+        description: >
+          Trimestre del año, expresado
+          mediante un valor entre 1 y 4.
         data_tests:
           - not_null
 
       - name: month
+        description: >
+          Número de mes del año,
+          comprendido entre 1 y 12.
         data_tests:
           - not_null
+
+      - name: month_name
+        description: >
+          Nombre abreviado del mes generado
+          mediante la función MONTHNAME de Snowflake.
+
+      - name: week_of_year
+        description: >
+          Número de semana del año
+          según el calendario ISO.
 
       - name: day_of_month
+        description: >
+          Número de día dentro del mes.
         data_tests:
           - not_null
 
+      - name: day_of_week
+        description: >
+          Número de día de la semana según ISO,
+          donde 1 corresponde al lunes
+          y 7 al domingo.
+
       - name: is_weekend
+        description: >
+          Indicador booleano que identifica
+          los sábados y domingos.
         data_tests:
           - not_null
+
+      - name: month_start_date
+        description: >
+          Fecha correspondiente al primer día
+          del mes.
+
+      - name: month_end_date
+        description: >
+          Fecha correspondiente al último día
+          del mes.

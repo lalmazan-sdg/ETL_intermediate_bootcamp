@@ -1,15 +1,59 @@
-
 version: 2
 
 models:
   - name: stg_tpch_sf10__customers
+    description: "{{ doc('stg_tpch_sf10__customers_description') }}"
+
     columns:
       - name: customer_id
+        description: >
+          Identificador único del cliente, procedente de c_custkey.
+          Clave primaria del modelo.
         data_tests:
           - unique
           - not_null
 
+      - name: nation_id
+        description: >
+          Identificador del país al que pertenece el cliente.
+          Procede de c_nationkey y permite establecer
+          relaciones con la información geográfica.
+
+      - name: customer_name
+        description: >
+          Nombre identificativo del cliente,
+          procedente de c_name.
+
+      - name: address
+        description: >
+          Dirección postal del cliente,
+          procedente de c_address.
+
+      - name: phone_number
+        description: >
+          Número de teléfono del cliente,
+          procedente de c_phone.
+
+      - name: account_balance
+        description: >
+          Saldo de la cuenta del cliente,
+          procedente de c_acctbal.
+          Puede contener valores positivos o negativos.
+
+      - name: market_segment
+        description: >
+          Segmento de mercado al que pertenece el cliente,
+          procedente de c_mktsegment.
+          Permite clasificar clientes para el análisis comercial.
+
+      - name: comment
+        description: >
+          Información adicional sobre el cliente,
+          procedente de c_comment.
+
   - name: stg_tpch_sf10__lineitems
+    description: "{{ doc('stg_tpch_sf10__lineitems_description') }}"
+
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -19,15 +63,49 @@ models:
 
     columns:
       - name: order_id
+        description: >
+          Identificador del pedido al que pertenece la línea,
+          procedente de l_orderkey.
+          Forma parte de la clave compuesta del modelo.
         data_tests:
           - not_null
 
       - name: line_number
+        description: >
+          Número de línea dentro del pedido,
+          procedente de l_linenumber.
+          Junto con order_id identifica cada registro.
         data_tests:
           - not_null
 
+      - name: part_id
+        description: >
+          Identificador del producto incluido
+          en la línea de pedido, procedente de l_partkey.
+
+      - name: supplier_id
+        description: >
+          Identificador del proveedor asociado
+          a la línea de pedido, procedente de l_suppkey.
+
+      - name: quantity
+        description: >
+          Cantidad de unidades del producto solicitadas
+          en la línea de pedido, procedente de l_quantity.
+
+      - name: extended_price
+        description: >
+          Importe bruto de la línea de pedido antes de aplicar
+          descuentos e impuestos, procedente de l_extendedprice.
+
       - name: discount_percentage
-        description: "Proporción de descuento aplicada a la línea de pedido."
+        description: >
+          Proporción de descuento aplicada a la línea de pedido,
+          procedente de l_discount.
+
+          Se expresa mediante un valor entre 0 y 1,
+          donde 0 representa ausencia de descuento
+          y 1 representa un descuento del 100 %.
         data_tests:
           - not_null
           - dbt_expectations.expect_column_values_to_be_between:
@@ -36,21 +114,98 @@ models:
                 max_value: 1
                 strictly: false
 
+      - name: tax_rate
+        description: >
+          Tasa impositiva aplicada a la línea de pedido,
+          procedente de l_tax.
+          Se expresa como una proporción.
+
+      - name: return_flag
+        description: >
+          Indicador relacionado con el estado de devolución
+          de la línea de pedido, procedente de l_returnflag.
+
+      - name: line_status
+        description: >
+          Estado de procesamiento de la línea de pedido,
+          procedente de l_linestatus.
+
+      - name: ship_date
+        description: >
+          Fecha de envío de la mercancía correspondiente
+          a la línea de pedido, procedente de l_shipdate.
+
+      - name: commit_date
+        description: >
+          Fecha comprometida para la entrega
+          de la línea de pedido, procedente de l_commitdate.
+
+      - name: receipt_date
+        description: >
+          Fecha de recepción de la mercancía,
+          procedente de l_receiptdate.
+
+      - name: ship_instructions
+        description: >
+          Instrucciones específicas para el envío
+          de la mercancía, procedentes de l_shipinstruct.
+
+      - name: ship_mode
+        description: >
+          Modalidad de transporte utilizada
+          para el envío, procedente de l_shipmode.
+
+      - name: comment
+        description: >
+          Información adicional sobre la línea de pedido,
+          procedente de l_comment.
+
   - name: stg_tpch_sf10__nations
+    description: "{{ doc('stg_tpch_sf10__nations_description') }}"
+
     columns:
       - name: nation_id
+        description: >
+          Identificador único del país, procedente de n_nationkey.
+          Clave primaria del modelo.
         data_tests:
           - unique
           - not_null
 
+      - name: region_id
+        description: >
+          Identificador de la región geográfica
+          a la que pertenece el país, procedente de n_regionkey.
+
+      - name: nation_name
+        description: >
+          Nombre del país, procedente de n_name.
+
+      - name: comment
+        description: >
+          Información adicional sobre el país,
+          procedente de n_comment.
+
   - name: stg_tpch_sf10__orders
+    description: "{{ doc('stg_tpch_sf10__orders_description') }}"
+
     columns:
       - name: order_id
+        description: >
+          Identificador único del pedido,
+          procedente de o_orderkey.
+          Clave primaria del modelo.
         data_tests:
           - unique
           - not_null
 
       - name: customer_id
+        description: >
+          Identificador del cliente que realizó el pedido,
+          procedente de o_custkey.
+
+          Permite relacionar los pedidos con
+          stg_tpch_sf10__customers.
         data_tests:
           - not_null
           - relationships:
@@ -58,8 +213,28 @@ models:
                 to: ref('stg_tpch_sf10__customers')
                 field: customer_id
 
+      - name: order_status
+        description: >
+          Estado general del pedido,
+          procedente de o_orderstatus.
+
+      - name: total_price
+        description: >
+          Importe total registrado para el pedido,
+          procedente de o_totalprice.
+
+          Representa el importe del pedido considerando
+          sus líneas y los ajustes económicos aplicables.
+
       - name: order_date
-        description: "Fecha del pedido, igual o posterior al inicio del periodo histórico de referencia."
+        description: >
+          Fecha en la que se realizó el pedido,
+          procedente de o_orderdate.
+
+          Permite realizar análisis temporales
+          de la actividad comercial.
+
+          Debe ser igual o posterior al 1 de enero de 1992.
         data_tests:
           - not_null
           - dbt_expectations.expect_column_values_to_be_between:
@@ -67,14 +242,82 @@ models:
                 min_value: "'1992-01-01'::date"
                 strictly: false
 
+      - name: order_priority
+        description: >
+          Nivel de prioridad asignado al pedido,
+          procedente de o_orderpriority.
+
+      - name: clerk_name
+        description: >
+          Identificador del empleado o agente encargado
+          de gestionar el pedido, procedente de o_clerk.
+
+      - name: ship_priority
+        description: >
+          Prioridad de envío asociada al pedido,
+          procedente de o_shippriority.
+
+      - name: comment
+        description: >
+          Información adicional sobre el pedido,
+          procedente de o_comment.
+
   - name: stg_tpch_sf10__parts
+    description: "{{ doc('stg_tpch_sf10__parts_description') }}"
+
     columns:
       - name: part_id
+        description: >
+          Identificador único del producto,
+          procedente de p_partkey.
+          Clave primaria del modelo.
         data_tests:
           - unique
           - not_null
 
+      - name: part_name
+        description: >
+          Nombre descriptivo del producto,
+          procedente de p_name.
+
+      - name: manufacturer
+        description: >
+          Fabricante del producto,
+          procedente de p_mfgr.
+
+      - name: brand
+        description: >
+          Marca comercial del producto,
+          procedente de p_brand.
+
+      - name: part_type
+        description: >
+          Clasificación o tipo de producto,
+          procedente de p_type.
+
+      - name: size
+        description: >
+          Tamaño del producto según la clasificación
+          utilizada por TPC-H, procedente de p_size.
+
+      - name: container
+        description: >
+          Tipo de embalaje o contenedor utilizado
+          para el producto, procedente de p_container.
+
+      - name: retail_price
+        description: >
+          Precio de venta de referencia del producto,
+          procedente de p_retailprice.
+
+      - name: comment
+        description: >
+          Información adicional sobre el producto,
+          procedente de p_comment.
+
   - name: stg_tpch_sf10__partsupps
+    description: "{{ doc('stg_tpch_sf10__partsupps_description') }}"
+
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -84,23 +327,110 @@ models:
 
     columns:
       - name: part_id
+        description: >
+          Identificador del producto suministrado,
+          procedente de ps_partkey.
+
+          Forma parte de la clave compuesta
+          que identifica la relación producto-proveedor.
         data_tests:
           - not_null
 
       - name: supplier_id
+        description: >
+          Identificador del proveedor asociado al producto,
+          procedente de ps_suppkey.
+
+          Junto con part_id identifica de forma única
+          cada relación de suministro.
         data_tests:
           - not_null
+
+      - name: available_quantity
+        description: >
+          Cantidad disponible del producto para
+          el proveedor correspondiente,
+          procedente de ps_availqty.
+
+      - name: supply_cost
+        description: >
+          Coste unitario de suministro del producto
+          por parte del proveedor,
+          procedente de ps_supplycost.
+
+      - name: comment
+        description: >
+          Información adicional sobre la relación
+          entre producto y proveedor,
+          procedente de ps_comment.
 
   - name: stg_tpch_sf10__regions
+    description: "{{ doc('stg_tpch_sf10__regions_description') }}"
+
     columns:
       - name: region_id
+        description: >
+          Identificador único de la región geográfica,
+          procedente de r_regionkey.
+          Clave primaria del modelo.
         data_tests:
           - unique
           - not_null
 
+      - name: region_name
+        description: >
+          Nombre de la región geográfica,
+          procedente de r_name.
+
+      - name: comment
+        description: >
+          Información adicional sobre la región,
+          procedente de r_comment.
+
   - name: stg_tpch_sf10__suppliers
+    description: "{{ doc('stg_tpch_sf10__suppliers_description') }}"
+
     columns:
       - name: supplier_id
+        description: >
+          Identificador único del proveedor,
+          procedente de s_suppkey.
+          Clave primaria del modelo.
         data_tests:
           - unique
           - not_null
+
+      - name: nation_id
+        description: >
+          Identificador del país al que pertenece
+          el proveedor, procedente de s_nationkey.
+
+          Permite relacionar los proveedores
+          con la información geográfica.
+
+      - name: supplier_name
+        description: >
+          Nombre identificativo del proveedor,
+          procedente de s_name.
+
+      - name: address
+        description: >
+          Dirección postal del proveedor,
+          procedente de s_address.
+
+      - name: phone_number
+        description: >
+          Número de teléfono del proveedor,
+          procedente de s_phone.
+
+      - name: account_balance
+        description: >
+          Saldo de la cuenta del proveedor,
+          procedente de s_acctbal.
+
+          Puede presentar valores positivos o negativos.
+
+      - name: comment
+        description: >
+          Información adicional sobre el proveedor,
+          procedente de s_comment.

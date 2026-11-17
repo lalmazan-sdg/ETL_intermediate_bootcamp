@@ -1,11 +1,6 @@
-
 snapshots:
   - name: snap_parts
-    description: >
-      Histórico de los productos de TPCH.
-      Conserva los cambios en precios,
-      características y clasificación
-      de los productos.
+    description: "{{ doc('snap_parts_description') }}"
 
     relation: ref('stg_tpch_sf10__parts')
 
@@ -30,22 +25,88 @@ snapshots:
 
     columns:
       - name: part_id
+        description: >
+          Identificador de negocio del producto.
+          Permite relacionar sus diferentes
+          versiones históricas.
         data_tests:
           - not_null
           - unique:
               config:
                 where: "dbt_valid_to is null"
 
+      - name: part_name
+        description: >
+          Nombre descriptivo del producto
+          durante la vigencia de la versión.
+
+      - name: manufacturer
+        description: >
+          Fabricante del producto registrado
+          en esta versión histórica.
+
+      - name: brand
+        description: >
+          Marca comercial del producto
+          durante la vigencia de la versión.
+
+      - name: part_type
+        description: >
+          Clasificación o tipo del producto
+          registrado en esta versión histórica.
+
+      - name: size
+        description: >
+          Tamaño del producto correspondiente
+          a la versión histórica.
+
+      - name: container
+        description: >
+          Tipo de embalaje o contenedor
+          registrado para el producto.
+
+      - name: retail_price
+        description: >
+          Precio de catálogo del producto
+          durante la vigencia de la versión histórica.
+
+      - name: comment
+        description: >
+          Información adicional del producto
+          conservada en esta versión.
+
       - name: dbt_scd_id
+        description: >
+          Identificador único generado por dbt
+          para cada versión histórica del producto.
         data_tests:
           - unique
           - not_null
 
+      - name: dbt_updated_at
+        description: >
+          Momento de actualización registrado por dbt
+          para la versión histórica del producto.
+
       - name: dbt_valid_from
+        description: >
+          Fecha y hora de inicio de vigencia
+          de la versión histórica.
         data_tests:
           - not_null
 
+      - name: dbt_valid_to
+        description: >
+          Fecha y hora de finalización de la vigencia.
+
+          Un valor NULL indica que la versión
+          permanece vigente.
+
       - name: dbt_is_deleted
+        description: >
+          Indicador booleano generado por dbt
+          que identifica eliminaciones del producto
+          detectadas en la fuente.
         data_tests:
           - not_null
           - accepted_values:
