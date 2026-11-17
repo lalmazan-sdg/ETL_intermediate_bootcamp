@@ -36,20 +36,6 @@ jobs:
       - name: Install dbt-coverage
         run: pip install dbt-coverage==0.5.0
 
-      - name: Prepare artifacts
-        shell: bash
-        run: |
-          mkdir -p target
-
-          manifest=$(find . -type f -name manifest.json -print -quit)
-          catalog=$(find . -type f -name catalog.json -print -quit)
-
-          test -n "$manifest"
-          test -n "$catalog"
-
-          cp "$manifest" target/manifest.json
-          cp "$catalog" target/catalog.json
-
       - name: Validate staging documentation
         run: |
           dbt-coverage compute doc \
