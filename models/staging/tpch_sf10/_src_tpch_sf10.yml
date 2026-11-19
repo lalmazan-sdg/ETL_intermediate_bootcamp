@@ -14,14 +14,7 @@ sources:
 
     tables:
       - name: customer
-        description: >
-          Tabla de clientes del sistema TPC-H.
-
-          Contiene información identificativa, geográfica,
-          comercial y financiera de los clientes.
-
-          Granularidad: una fila por cliente, identificado
-          mediante c_custkey.
+        description: "{{ doc('src_tpch_sf10__customer_description') }}"
 
         columns:
           - name: c_custkey
@@ -64,17 +57,7 @@ sources:
               Información adicional sobre el cliente.
 
       - name: lineitem
-        description: >
-          Tabla que contiene el detalle de las líneas
-          asociadas a los pedidos comerciales.
-
-          Incluye información sobre productos, proveedores,
-          cantidades, precios, descuentos, impuestos
-          y fechas logísticas.
-
-          Granularidad: una fila por línea de pedido,
-          identificada mediante la combinación de
-          l_orderkey y l_linenumber.
+        description: "{{ doc('src_tpch_sf10__lineitem_description') }}"
 
         columns:
           - name: l_orderkey
@@ -160,14 +143,7 @@ sources:
               de pedido.
 
       - name: nation
-        description: >
-          Tabla de referencia que contiene los países
-          definidos en el conjunto de datos TPC-H.
-
-          Permite asociar clientes y proveedores
-          a una ubicación geográfica.
-
-          Granularidad: una fila por país.
+        description: "{{ doc('src_tpch_sf10__nation_description') }}"
 
         columns:
           - name: n_nationkey
@@ -192,16 +168,7 @@ sources:
               Información adicional sobre el país.
 
       - name: orders
-        description: >
-          Tabla que contiene las cabeceras de los pedidos
-          realizados por los clientes.
-
-          Incluye información comercial y administrativa
-          de cada pedido, como fechas, estado,
-          prioridad e importe total.
-
-          Granularidad: una fila por pedido,
-          identificado mediante o_orderkey.
+        description: "{{ doc('src_tpch_sf10__orders_description') }}"
 
         columns:
           - name: o_orderkey
@@ -255,15 +222,7 @@ sources:
               Información adicional sobre el pedido.
 
       - name: part
-        description: >
-          Catálogo de productos disponibles
-          en el sistema comercial TPC-H.
-
-          Contiene características identificativas
-          y comerciales de los productos.
-
-          Granularidad: una fila por producto,
-          identificado mediante p_partkey.
+        description: "{{ doc('src_tpch_sf10__part_description') }}"
 
         columns:
           - name: p_partkey
@@ -310,16 +269,7 @@ sources:
               Información adicional sobre el producto.
 
       - name: partsupp
-        description: >
-          Tabla que relaciona los productos
-          con los proveedores que pueden suministrarlos.
-
-          Incluye información sobre disponibilidad
-          y costes de suministro.
-
-          Granularidad: una fila por combinación
-          de producto y proveedor, identificada
-          mediante ps_partkey y ps_suppkey.
+        description: "{{ doc('src_tpch_sf10__partsupp_description') }}"
 
         columns:
           - name: ps_partkey
@@ -353,15 +303,7 @@ sources:
               la relación producto-proveedor.
 
       - name: region
-        description: >
-          Tabla de referencia que contiene
-          las regiones geográficas definidas
-          en el sistema TPC-H.
-
-          Permite agrupar países y realizar
-          análisis comerciales por región.
-
-          Granularidad: una fila por región.
+        description: "{{ doc('src_tpch_sf10__region_description') }}"
 
         columns:
           - name: r_regionkey
@@ -381,14 +323,7 @@ sources:
               Información adicional sobre la región.
 
       - name: supplier
-        description: >
-          Tabla de proveedores del sistema TPC-H.
-
-          Contiene información identificativa,
-          geográfica y financiera de los proveedores.
-
-          Granularidad: una fila por proveedor,
-          identificado mediante s_suppkey.
+        description: "{{ doc('src_tpch_sf10__supplier_description') }}"
 
         columns:
           - name: s_suppkey
