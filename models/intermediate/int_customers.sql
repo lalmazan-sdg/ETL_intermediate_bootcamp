@@ -24,7 +24,7 @@ with
 
             case
                 when c.account_balance > 0 then true else false
-            end as is_positive_balance
+            end as is_positive_balance 
 
         from customers as c
         left join geography as g on c.nation_id = g.nation_id
