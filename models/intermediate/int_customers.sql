@@ -1,3 +1,4 @@
+-- new comment
 with
     customers as (select * from {{ ref("stg_tpch_sf10__customers") }}),
 
