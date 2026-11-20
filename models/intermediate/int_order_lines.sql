@@ -1,3 +1,4 @@
+-- comment
 with
     orders as (select * from {{ ref("stg_tpch_sf10__orders") }}),
 
