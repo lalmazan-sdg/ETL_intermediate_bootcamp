@@ -1,3 +1,4 @@
+-- new comment
 with
     partsupp as (select * from {{ ref("stg_tpch_sf10__partsupps") }}),
 
